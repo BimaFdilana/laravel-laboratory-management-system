@@ -5,7 +5,7 @@ Repositori ini merupakan implementasi **Aplikasi Peminjaman Laboratorium** berba
 ## Visit Website ( Demo )
 <p align="center">
   <a href="https://pin-lab.virtualtouralamayangpku.my.id/">
-    <img src="https://img.shields.io/badge/Visit-Website-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Visit Website">
+    <img src="https://img.shields.io/badge/Visit-Website-4CAF50" alt="Visit Website">
   </a>
 </p>
 
