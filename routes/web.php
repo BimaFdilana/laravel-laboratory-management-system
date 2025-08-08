@@ -28,16 +28,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
 
     // Route yang WAJIB profil lengkap (membuat & menyimpan peminjaman)
-    Route::middleware(['profil.lengkap'])->group(function() {
+    Route::middleware(['profil.lengkap'])->group(function () {
         Route::get('peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
         Route::post('peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     });
 
     // Route untuk Admin
     Route::middleware(['role:admin'])->group(function () {
-        Route::patch('peminjaman/{peminjaman}/status', [PeminjamanController::class, 'updateStatus'])
-            ->name('peminjaman.updateStatus');
+        Route::patch('peminjaman/{peminjaman}/status', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
     });
+
+    Route::get('/peminjaman/booked-dates/{labor_id}', [PeminjamanController::class, 'getBookedDates'])->name('peminjaman.bookedDates');
     Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
 });

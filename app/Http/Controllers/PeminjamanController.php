@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Labor;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notification;
+use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
@@ -39,8 +41,19 @@ class PeminjamanController extends Controller
             'penanggung_jawab' => 'required|string|max:255',
         ]);
 
+        $requestedDate = Carbon::parse($request->waktu_peminjaman)->toDateString();
+
+        $isConflict = Peminjaman::where('labor_id', $request->labor_id)
+            ->whereDate('waktu_peminjaman', $requestedDate)
+            ->whereIn('status', ['diajukan', 'disetujui', 'berjalan'])
+            ->exists();
+        if ($isConflict) {
+            throw ValidationException::withMessages([
+                'waktu_peminjaman' => 'Laboratorium tidak tersedia pada tanggal yang dipilih karena sudah ada yang meminjam atau mengajukan.',
+            ]);
+        }
         Peminjaman::create([
-            'user_id' => Auth::id(),
+            'user_id' => auth()->id(),
             'labor_id' => $request->labor_id,
             'alasan' => $request->alasan,
             'waktu_peminjaman' => $request->waktu_peminjaman,
@@ -57,9 +70,11 @@ class PeminjamanController extends Controller
         $newStatus = $request->status;
 
         if ($newStatus == 'disetujui') {
+            $tanggalPeminjaman = Carbon::parse($peminjaman->waktu_peminjaman)->toDateString();
+
             $isConflict = Peminjaman::where('labor_id', $peminjaman->labor_id)
-                ->where('waktu_peminjaman', $peminjaman->waktu_peminjaman)
-                ->where('status', 'disetujui')
+                ->whereDate('waktu_peminjaman', $tanggalPeminjaman)
+                ->whereIn('status', ['disetujui', 'berjalan'])
                 ->where('id', '!=', $peminjaman->id)
                 ->exists();
 
@@ -102,5 +117,20 @@ class PeminjamanController extends Controller
         }
 
         return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diperbarui.');
+    }
+
+    public function getBookedDates($labor_id)
+    {
+        $bookedDates = Peminjaman::where('labor_id', $labor_id)
+            ->whereIn('status', ['diajukan', 'disetujui', 'berjalan'])
+            ->get()
+            ->pluck('waktu_peminjaman')
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        return response()->json($bookedDates);
     }
 }
