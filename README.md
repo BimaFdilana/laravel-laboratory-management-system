@@ -2,6 +2,13 @@
 
 Repositori ini merupakan implementasi **Aplikasi Peminjaman Laboratorium** berbasis web yang dikembangkan sebagai **Tugas Akhir** oleh mahasiswa Politeknik Negeri Bengkalis. Sistem ini ditujukan untuk mendukung proses peminjaman laboratorium secara digital oleh mahasiswa, serta memudahkan kepala laboratorium dalam memantau dan memverifikasi permintaan peminjaman.
 
+## Visit Website ( Demo )
+<p align="center">
+  <a href="https://pin-lab.virtualtouralamayangpku.my.id/">
+    <img src="https://img.shields.io/badge/Visit-Website-4CAF50" alt="Visit Website">
+  </a>
+</p>
+
 ---
 
 ## ✨ Fitur Utama
